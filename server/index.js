@@ -46,6 +46,30 @@ async function run() {
       res.send(result);
     });
 
+    // to login a user
+    app.post('/login', async (req, res) => {
+      const { name, email, pin } = req.body;
+      let user = {};
+      if (name) {
+        user = await userCollection.findOne({ name });
+      }
+      if (email) {
+        user = await userCollection.findOne({ email });
+      }
+
+      if (!user) {
+        res.status(401).send({ message: 'Invalid Credentials' });
+        return;
+      }
+      // compare the hashed pin of the user with the provided pin
+      const isPinValid = await bcrypt.compare(pin, user.pin);
+      if (!isPinValid) {
+        res.status(401).send({ success: false, message: 'Invalid Credentials' });
+        return;
+      }
+      res.status(200).json({ success: true, message: 'Logged in successfully', user });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db('admin').command({ ping: 1 });
     console.log('Pinged your deployment. You successfully connected to MongoDB!');
