@@ -6,19 +6,43 @@ import { GiCash } from 'react-icons/gi';
 import { Link } from 'react-router-dom';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export function SignUp() {
   const [selectedRole, setSelectedRole] = useState();
+
   const handleChange = (value) => {
     setSelectedRole(value);
   };
   console.log(selectedRole);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const form = new FormData(e.target);
-    const formData = Object.fromEntries(form.entries());
-    console.log(formData);
+  const schema = z.object({
+    name: z.string().min(3).max(50),
+    email: z.string().email(),
+    phone: z.string().refine((val) => /^\+?[\d\s\-()]{10,20}$/.test(val), {
+      message: 'Invalid phone number',
+    }),
+    pin: z.string().refine((val) => /^[0-9]{5}$/.test(val), {
+      message: 'Invalid PIN. It must be exactly 5 digits.',
+    }),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(schema) });
+
+  const submitHandler = async (data) => {
+    data.role = selectedRole;
+    try {
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -36,26 +60,30 @@ export function SignUp() {
           <CardDescription>Enter your information to create an account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(submitHandler)}>
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" name="name" type="text" required />
+                <Input id="name" {...register('name')} type="text" required />
+                {errors.name && <div className="text-red-500 text-xs"> {errors.name?.message} </div>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" required />
+                <Input id="email" {...register('email')} type="email" required />
+                {errors.email && <div className="text-red-500 text-xs"> {errors.email?.message} </div>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="phone">Phone No.</Label>
-                <Input id="phone" name="phone" type="text" required />
+                <Input id="phone" {...register('phone')} type="text" required />
+                {errors.phone && <div className="text-red-500 text-xs"> {errors.phone?.message} </div>}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="PIN">PIN (5 digits)</Label>
-                <Input id="PIN" name="pin" type="password" required />
+                <Label htmlFor="pin">PIN (5 digits)</Label>
+                <Input id="pin" {...register('pin')} type="password" required />
+                {errors.pin && <div className="text-red-500 text-xs"> {errors.pin?.message} </div>}
               </div>
               <div className="grid gap-2">
-                <Select name="role" onValueChange={handleChange}>
+                <Select onValueChange={handleChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a role" />
                   </SelectTrigger>
