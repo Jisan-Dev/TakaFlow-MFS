@@ -48,13 +48,12 @@ async function run() {
 
     // to login a user
     app.post('/login', async (req, res) => {
-      const { name, email, pin } = req.body;
+      const { phoneOrEmail, pin } = req.body;
       let user = {};
-      if (name) {
-        user = await userCollection.findOne({ name });
-      }
-      if (email) {
-        user = await userCollection.findOne({ email });
+      if (phoneOrEmail.includes('@')) {
+        user = await userCollection.findOne({ email: phoneOrEmail });
+      } else {
+        user = await userCollection.findOne({ phone: phoneOrEmail });
       }
 
       if (!user) {
