@@ -3,14 +3,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { GiCash } from 'react-icons/gi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import useAxiosPublic from '@/hooks/useAxiosPublic';
 
 export function SignUp() {
+  const axiosPublic = useAxiosPublic();
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState();
 
   const handleChange = (value) => {
@@ -40,6 +43,9 @@ export function SignUp() {
     data.role = selectedRole;
     try {
       console.log(data);
+      const { data: result } = await axiosPublic.post('/users', data);
+      console.log(result);
+      navigate('/login', { replace: true });
     } catch (error) {
       console.log(error);
     }
