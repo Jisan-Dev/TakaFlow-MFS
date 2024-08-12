@@ -7,9 +7,17 @@ let jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.chn7ebi.mongodb.net/?appName=Cluster0`;
 var bcrypt = require('bcryptjs');
+const cookieParser = require('cookie-parser');
 
-app.use(cors());
+const corsOption = {
+  origin: ['http://localhost:5173'],
+  credentials: true,
+  optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOption));
 app.use(express.json());
+app.use(cookieParser());
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -23,6 +31,19 @@ async function run() {
   try {
     const db = client.db('TakaFlowDB');
     const userCollection = db.collection('users');
+
+    // generate jwt and set at cookies
+    app.post('/jwt', async (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '365d' });
+      res
+        .cookie('token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+        })
+        .send({ success: true });
+    });
 
     // to add a new user
     app.post('/users', async (req, res) => {
