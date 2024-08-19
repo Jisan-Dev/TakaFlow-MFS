@@ -1,11 +1,15 @@
 import { Link, NavLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { AiOutlineBars } from 'react-icons/ai';
 import { GiCash } from 'react-icons/gi';
 import MenuItem from './menu/MenuItem';
 import { SiHdfcbank } from 'react-icons/si';
+import { AuthContext } from '@/providers/AuthProvider';
+import UserMenu from './menu/UserMenu';
+import AgentMenu from './menu/AgentMenu';
 
 const Sidebar = () => {
+  const { user } = useContext(AuthContext);
   const [isActive, setActive] = useState(false);
   // const [toggle, setToggle] = useState(true);
   // const { booleanState, toggleBooleanState } = useBoolean();
@@ -56,9 +60,9 @@ const Sidebar = () => {
           <div className="flex flex-col justify-between flex-1 mt-6">
             {/*  Menu Items */}
             <nav>
-              {/* <MenuItem address={'/dashboard'} icon={BsGraphUp} label={'Statistics'} /> */}
-              <MenuItem address="/" icon={SiHdfcbank} label="Overview" />
-              <MenuItem address="/das" icon={SiHdfcbank} label="Overview" />
+              <MenuItem address={'/'} icon={SiHdfcbank} label={'OverviewCom'} />
+              {user?.role === 'user' && <UserMenu />}
+              {user?.role === 'agent' && <AgentMenu />}
 
               {/* Add Room */}
               {/* {role === 'guest' && <GuestMenu />}

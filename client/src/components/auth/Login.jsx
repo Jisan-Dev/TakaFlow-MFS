@@ -9,6 +9,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAxiosPublic from '@/hooks/useAxiosPublic';
 import useAxiosSecure from '@/hooks/useAxiosSecure';
+import { useContext } from 'react';
+import { AuthContext } from '@/providers/AuthProvider';
 
 const schema = z.object({
   phoneOrEmail: z.string().refine((val) => /^\+?[\d\s\-()]{10,20}$|^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/.test(val), { message: 'Invalid email or phone number' }),
@@ -21,6 +23,7 @@ export function Login() {
   const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
+  const { setUpdate } = useContext(AuthContext);
 
   const {
     register,
@@ -33,6 +36,7 @@ export function Login() {
     const { data: formData } = await axiosPublic.post('/login', data);
     console.log('formData', formData);
     const { data: tokenData } = await axiosSecure.post('/jwt', { phoneOrEmail: data.phoneOrEmail });
+    setUpdate((prev) => !prev);
     console.log('tokenData', tokenData);
     navigate('/');
   };
