@@ -24,31 +24,24 @@ const Sidebar = () => {
   return (
     <>
       {/* Small Screen Navbar */}
-      <div className="bg-gray-100 text-gray-800 flex justify-between md:hidden">
+      <div className="bg-indigo-100/20 text-gray-800 flex justify-between md:hidden">
         <div>
           <div className="block cursor-pointer p-4 font-bold">
-            <h1>Hello</h1>
-            {/* <Link to="/">
-              <img
-                // className='hidden md:block'
-                src="https://i.ibb.co/4ZXzmq5/logo.png"
-                alt="logo"
-                width="100"
-                height="100"
-              />
-            </Link> */}
+            <Link to={'/'} className="text-2xl font-semibold font-ibmsans flex items-center gap-1 text-indigo-600">
+              <GiCash className="text-4xl" /> TakaFlow
+            </Link>
           </div>
         </div>
 
-        <button onClick={handleToggle} className="mobile-menu-button p-4 focus:outline-none focus:bg-gray-200">
-          <AiOutlineBars className="h-5 w-5" />
+        <button onClick={handleToggle} className="mobile-menu-button p-4 focus:outline-none ">
+          <AiOutlineBars className="h-5 w-5 text-indigo-800" />
         </button>
       </div>
 
       {/* Sidebar */}
       <div
         className={`z-10 md:fixed flex flex-col justify-between overflow-x-hidden bg-purple-100 w-64 space-y-6 px-2 py-4 absolute inset-y-0 left-0 transform ${
-          isActive && '-translate-x-full'
+          !isActive && '-translate-x-full'
         }  md:translate-x-0  transition duration-200 ease-in-out`}>
         <div>
           <div>
