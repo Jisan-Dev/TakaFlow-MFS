@@ -41,6 +41,7 @@ export function SignUp() {
 
   const submitHandler = async (data) => {
     data.role = selectedRole;
+    data.status = 'pending';
     try {
       console.log(data);
       const { data: result } = await axiosPublic.post('/users', data);
