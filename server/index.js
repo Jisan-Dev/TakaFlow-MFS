@@ -8,6 +8,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.chn7ebi.mongodb.net/?appName=Cluster0`;
 var bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
+const { verifyToken } = require('./middlewares/verifyToken');
 
 const corsOption = {
   origin: ['http://localhost:5173'],
@@ -43,6 +44,18 @@ async function run() {
           sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
         })
         .send({ success: true });
+    });
+
+    // to find current user
+    app.get('/currUser', verifyToken, async (req, res) => {
+      const { phoneOrEmail } = req.user;
+      let user = {};
+      if (phoneOrEmail.includes('@')) {
+        user = await userCollection.findOne({ email: phoneOrEmail });
+      } else {
+        user = await userCollection.findOne({ phone: phoneOrEmail });
+      }
+      res.send(user);
     });
 
     // to add a new user

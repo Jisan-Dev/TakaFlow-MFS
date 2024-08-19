@@ -34,6 +34,7 @@ export function Login() {
     console.log('formData', formData);
     const { data: tokenData } = await axiosSecure.post('/jwt', { phoneOrEmail: data.phoneOrEmail });
     console.log('tokenData', tokenData);
+    navigate('/');
   };
 
   return (
