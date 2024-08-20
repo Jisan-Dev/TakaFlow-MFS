@@ -10,12 +10,15 @@ const AuthProvider = ({ children }) => {
   const [update, setUpdate] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const getUser = async () => {
       const { data } = await axios.get('http://localhost:5000/currUser', { withCredentials: true });
       setUser(data);
+      console.log('curreUser=>', data);
       setLoading(false);
     };
     getUser();
+    setLoading(false);
   }, [update]);
 
   const authInfo = { user, loading, setUpdate, setLoading };

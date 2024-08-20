@@ -32,7 +32,7 @@ const Sidebar = () => {
         <div>
           <div className="block cursor-pointer p-4 font-bold">
             <Link to={'/'} className="text-2xl font-semibold font-ibmsans flex items-center gap-1 text-indigo-600">
-              <GiCash className="text-4xl" /> TakaFlow
+              <GiCash className="text-4xl" /> TakaFlows
             </Link>
           </div>
         </div>

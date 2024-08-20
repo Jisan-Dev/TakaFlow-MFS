@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { GiCash } from 'react-icons/gi';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,7 +23,9 @@ export function Login() {
   const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
-  const { setUpdate } = useContext(AuthContext);
+  const { setUpdate, user } = useContext(AuthContext);
+  const location = useLocation();
+  const from = location?.state || '/';
 
   const {
     register,
@@ -38,11 +40,12 @@ export function Login() {
     const { data: tokenData } = await axiosSecure.post('/jwt', { phoneOrEmail: data.phoneOrEmail });
     setUpdate((prev) => !prev);
     console.log('tokenData', tokenData);
-    navigate('/');
+    localStorage.setItem('token', tokenData?.token);
+    navigate(from, { replace: true });
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-indigo-800">
+    <div className="flex items-center justify-center min-h-screen bg-indigo-800 max-sm:px-4">
       <form onSubmit={handleSubmit(submitHandler)}>
         <Card className="mx-auto max-w-sm bg-purple-100 shadow-2xl ">
           <CardHeader>
