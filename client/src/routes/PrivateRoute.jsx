@@ -10,7 +10,7 @@ const PrivateRoute = ({ children }) => {
   const isLoggedIn = () => {
     const token = localStorage.getItem('token');
     console.log(token);
-    if (!token || token === undefined) {
+    if (!token) {
       return false;
     } else {
       return true;

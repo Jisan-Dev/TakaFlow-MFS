@@ -43,7 +43,7 @@ async function run() {
           secure: process.env.NODE_ENV === 'production',
           sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
         })
-        .send({ success: true, token });
+        .send({ success: true });
     });
 
     // to find current user
@@ -55,7 +55,6 @@ async function run() {
       } else {
         user = await userCollection.findOne({ phone: phoneOrEmail });
       }
-      user.token = req.token;
       res.send(user);
     });
 
