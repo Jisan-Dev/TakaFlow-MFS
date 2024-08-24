@@ -36,14 +36,14 @@ async function run() {
     // generate jwt and set at cookies
     app.post('/jwt', async (req, res) => {
       const user = req.body;
-      const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '365d' });
+      const token = jwt.sign(user, process.env.JWT_SECRET, { expiresIn: '120s' });
       res
         .cookie('token', token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
         })
-        .send({ success: true });
+        .send({ success: true, token: 'access-token' });
     });
 
     // to find current user

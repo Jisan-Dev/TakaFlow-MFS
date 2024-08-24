@@ -40,7 +40,9 @@ export function Login() {
     const { data: tokenData } = await axiosSecure.post('/jwt', { phoneOrEmail: data.phoneOrEmail });
     setUpdate((prev) => !prev);
     console.log('tokenData', tokenData);
-    localStorage.setItem('token', tokenData?.token);
+    if (tokenData) {
+      localStorage.setItem('token', tokenData?.token);
+    }
     navigate(from, { replace: true });
   };
 
