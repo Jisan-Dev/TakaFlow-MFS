@@ -97,7 +97,7 @@ export function SignUp() {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Roles</SelectLabel>
-                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="personal">Personal</SelectItem>
                       <SelectItem value="agent">Agent</SelectItem>
                     </SelectGroup>
                   </SelectContent>
