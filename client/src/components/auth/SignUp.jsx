@@ -48,7 +48,7 @@ export function SignUp() {
       console.log(result);
       navigate('/login', { replace: true });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

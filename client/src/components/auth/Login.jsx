@@ -35,14 +35,14 @@ export function Login() {
 
   const submitHandler = async (data) => {
     console.log(data);
-    const { data: formData } = await axiosPublic.post('/login', data);
+    const { data: formData } = await axiosPublic.get('/users', { params: data });
     console.log('formData', formData);
-    const { data: tokenData } = await axiosSecure.post('/jwt', { phoneOrEmail: data.phoneOrEmail });
+    // const { data: tokenData } = await axiosSecure.post('/jwt', { phoneOrEmail: data.phoneOrEmail });
     setUpdate((prev) => !prev);
-    console.log('tokenData', tokenData);
-    if (tokenData) {
-      localStorage.setItem('token', tokenData?.token);
-    }
+    // console.log('tokenData', tokenData);
+    // if (tokenData) {
+    //   localStorage.setItem('token', tokenData?.token);
+    // }
     navigate(from, { replace: true });
   };
 
