@@ -35,7 +35,7 @@ export function Login() {
 
   const submitHandler = async (data) => {
     console.log(data);
-    const { data: formData } = await axiosPublic.get('/users', { params: data });
+    const { data: formData } = await axiosSecure.get('/users', { params: data });
     console.log('formData', formData);
     // const { data: tokenData } = await axiosSecure.post('/jwt', { phoneOrEmail: data.phoneOrEmail });
     setUpdate((prev) => !prev);
