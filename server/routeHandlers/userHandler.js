@@ -7,6 +7,7 @@ const User = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 let jwt = require('jsonwebtoken');
 const { verifyToken } = require('../middlewares/verifyToken');
+const sendEmail = require('../services/mail-service');
 
 router.post('/', async (req, res) => {
   try {
@@ -26,6 +27,11 @@ router.post('/', async (req, res) => {
     // user.createdAt = Date.now();
 
     const result = await user.save();
+
+    sendEmail(result.email, {
+      subject: 'Welcome to TakaFlow Instant Banking',
+      text: `<h1> Welcome to TakaFlow ${result.name}!</h1><br/> <h3>Your registration was successful.</h3> <br/> Thank You for joining to the fastest MFS of the region, Hope you will enjoy our services. Have A good Time!<br/> Your phone number is ${result.phone}.`,
+    });
 
     res.status(200).json(result);
   } catch (error) {
