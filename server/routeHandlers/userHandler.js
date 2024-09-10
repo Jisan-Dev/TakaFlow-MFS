@@ -11,7 +11,10 @@ const { verifyToken } = require('../middlewares/verifyToken');
 router.post('/', async (req, res) => {
   try {
     const user = new User(req.body);
-    const isExist = await User.findOne({ email: user.email });
+    const query = {
+      $or: [{ phone: user.phone }, { email: user.email }],
+    };
+    const isExist = await User.findOne(query);
     if (isExist) {
       res.status(409).json({ message: 'User already exists' });
       return;
