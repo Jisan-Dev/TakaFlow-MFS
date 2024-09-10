@@ -6,10 +6,10 @@ import { Navigate } from 'react-router-dom';
 
 const Overview = () => {
   const { user } = useContext(AuthContext);
-  if (!user) return <Navigate to={'/login'} />;
+  // if (!user) return <Navigate to={'/login'} />;
   return (
     <>
-      {user?.role === 'user' && <UserOverview />}
+      {user?.role === 'personal' && <UserOverview />}
       {user?.role === 'agent' && <AgentOverview />}
     </>
   );

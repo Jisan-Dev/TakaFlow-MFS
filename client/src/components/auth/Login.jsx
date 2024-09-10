@@ -11,6 +11,7 @@ import useAxiosPublic from '@/hooks/useAxiosPublic';
 import useAxiosSecure from '@/hooks/useAxiosSecure';
 import { useContext } from 'react';
 import { AuthContext } from '@/providers/AuthProvider';
+import toast from 'react-hot-toast';
 
 const schema = z.object({
   phoneOrEmail: z.string().refine((val) => /^\+?[\d\s\-()]{10,20}$|^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/.test(val), { message: 'Invalid email or phone number' }),
@@ -23,7 +24,7 @@ export function Login() {
   const axiosPublic = useAxiosPublic();
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
-  const { setUpdate, user } = useContext(AuthContext);
+  const { setUpdate, signIn, setLoading } = useContext(AuthContext);
   const location = useLocation();
   const from = location?.state || '/';
 
@@ -34,16 +35,33 @@ export function Login() {
   } = useForm({ resolver: zodResolver(schema) });
 
   const submitHandler = async (data) => {
-    console.log(data);
-    const { data: formData } = await axiosSecure.get('/users', { params: data });
-    console.log('formData', formData);
-    // const { data: tokenData } = await axiosSecure.post('/jwt', { phoneOrEmail: data.phoneOrEmail });
-    setUpdate((prev) => !prev);
-    // console.log('tokenData', tokenData);
-    // if (tokenData) {
-    //   localStorage.setItem('token', tokenData?.token);
+    try {
+      const userData = await signIn(data);
+      if (userData.success && userData.status === 'verified') {
+        toast.success('Login Successful');
+        setUpdate((prev) => !prev);
+        // navigate(from, { replace: true });
+        navigate('/');
+      } else {
+        if (userData.user.status === 'pending') {
+          console.log(userData);
+          toast.error('Wait for the admin approval!');
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message || 'Login Failed');
+    }
+
+    // setLoading(true);
+    // console.log(data);
+    // const { data: formData } = await axiosPublic.get('/users', { params: data });
+    // console.log('formData', formData);
+    // if (formData.success) {
+    //   localStorage.setItem('user', formData.user);
+    //   setUpdate((prev) => !prev);
     // }
-    navigate(from, { replace: true });
+    // navigate(from, { replace: true });
   };
 
   return (

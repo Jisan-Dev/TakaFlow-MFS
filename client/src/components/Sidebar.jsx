@@ -61,7 +61,7 @@ const Sidebar = () => {
             {/*  Menu Items */}
             <nav>
               <MenuItem address={'/'} icon={SiHdfcbank} label={'OverviewCom'} />
-              {user?.role === 'user' && <UserMenu />}
+              {user?.role === 'personal' && <UserMenu />}
               {user?.role === 'agent' && <AgentMenu />}
 
               {/* Add Room */}

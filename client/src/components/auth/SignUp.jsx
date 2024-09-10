@@ -10,11 +10,14 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAxiosPublic from '@/hooks/useAxiosPublic';
+import toast from 'react-hot-toast';
+import useAuth from '@/hooks/useAuth';
 
 export function SignUp() {
   const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState();
+  const { setUpdate, setUser, setLoading, createUser } = useAuth();
 
   const handleChange = (value) => {
     setSelectedRole(value);
@@ -40,14 +43,33 @@ export function SignUp() {
   } = useForm({ resolver: zodResolver(schema) });
 
   const submitHandler = async (data) => {
+    if (!selectedRole) {
+      return toast.error('Please Provide your Account Type');
+    }
     data.role = selectedRole;
-    data.status = 'pending';
+    data.status = selectedRole === 'personal' ? 'verified' : 'pending';
+    data.balance = (selectedRole === 'personal' && 100.0) || (selectedRole === 'agent' && 1000.0);
     try {
+      setLoading(true);
       console.log(data);
-      const { data: result } = await axiosPublic.post('/users', data);
+      // const result = await axiosPublic.post('/users', data);
+      const result = await createUser(data);
       console.log(result);
-      navigate('/login', { replace: true });
+      console.log(result.status);
+      if (result.status === 200 && result.data?.status === 'verified') {
+        toast.success('Registration Successful! Registration Bonus BDT 100 has been added to your account!');
+        setUpdate((prev) => !prev);
+        navigate('/');
+      } else if (result.status === 200 && result.data?.status !== 'verified') {
+        toast.success('Registration Successful! Agent Bonus BDT 1000 has been added to your account!');
+        reset();
+      }
     } catch (error) {
+      if (error?.response?.status === 409) {
+        toast.error(error.response.data.message || 'User already exist');
+      } else {
+        toast.error('Something went wrong, please try again later');
+      }
       console.error(error);
     }
   };
@@ -92,11 +114,11 @@ export function SignUp() {
               <div className="grid gap-2">
                 <Select onValueChange={handleChange}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
+                    <SelectValue placeholder="Account Type" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Roles</SelectLabel>
+                      <SelectLabel>Select your account type</SelectLabel>
                       <SelectItem value="personal">Personal</SelectItem>
                       <SelectItem value="agent">Agent</SelectItem>
                     </SelectGroup>
