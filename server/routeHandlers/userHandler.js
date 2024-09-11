@@ -28,10 +28,17 @@ router.post('/', async (req, res) => {
 
     const result = await user.save();
 
-    sendEmail(result.email, {
-      subject: 'Welcome to TakaFlow Instant Banking',
-      text: `<h1> Welcome to TakaFlow ${result.name}!</h1><br/> <h3>Your registration was successful.</h3> <br/> Thank You for joining to the fastest MFS of the region, Hope you will enjoy our services. Have A good Time!<br/> Your phone number is ${result.phone}.`,
-    });
+    if (result.status === 'verified') {
+      sendEmail(result.email, {
+        subject: 'Welcome to TakaFlow Instant Banking',
+        text: `<h1> Welcome to TakaFlow ${result.name}!</h1><br/> <h3>Your registration was successful.</h3> <br/> Thank You for joining to the fastest MFS of the region, Hope you will enjoy our services. Have A good Time!<br/> Your phone number is ${result.phone}.`,
+      });
+    } else if (result.status === 'pending') {
+      sendEmail(result.email, {
+        subject: 'Welcome to TakaFlow Instant Banking',
+        text: `<h1> Welcome to TakaFlow ${result.name}!</h1><br/> <h3>Your registration was successful.</h3> <br/> Thank You for joining to the fastest MFS of the region, Hope you will enjoy our services. <br/> <h4>You requested for a agent type account. So please wait for the admin approval to log in.</h4> <br/> Have A good Time!<br/> Your phone number is ${result.phone}.`,
+      });
+    }
 
     res.status(200).json(result);
   } catch (error) {
