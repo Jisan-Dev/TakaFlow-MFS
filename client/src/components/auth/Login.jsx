@@ -9,9 +9,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAxiosPublic from '@/hooks/useAxiosPublic';
 import useAxiosSecure from '@/hooks/useAxiosSecure';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '@/providers/AuthProvider';
 import toast from 'react-hot-toast';
+import AgentModal from './AgentModal';
 
 const schema = z.object({
   phoneOrEmail: z.string().refine((val) => /^\+?[\d\s\-()]{10,20}$|^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/.test(val), { message: 'Invalid email or phone number' }),
@@ -28,10 +29,17 @@ export function Login() {
   const location = useLocation();
   const from = location?.state || '/';
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    reset();
+  };
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({ resolver: zodResolver(schema) });
 
   const submitHandler = async (data) => {
@@ -45,7 +53,7 @@ export function Login() {
       } else {
         if (userData.user.status === 'pending') {
           console.log(userData);
-          toast.error('Wait for the admin approval!');
+          setIsModalOpen(true);
         }
       }
     } catch (error) {
@@ -103,6 +111,7 @@ export function Login() {
             </div>
           </CardContent>
         </Card>
+        <AgentModal isOpen={isModalOpen} onClose={handleModalClose} agentLoginUnapproved={true} />
       </form>
     </div>
   );
