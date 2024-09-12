@@ -6,7 +6,7 @@ const userSchema = mongoose.Schema(
     email: { type: String, unique: true, required: true },
     pin: { type: String, required: true },
     phone: { type: String, unique: true, required: true },
-    role: { type: String, enum: ['personal', 'agent'], default: 'personal' },
+    role: { type: String, enum: ['personal', 'agent', 'admin'], default: 'personal' },
     status: { type: String, enum: ['pending', 'verified', 'rejected'], default: 'pending' },
     balance: { type: Number },
     // created_at: { type: Date, default: Date.now() },
