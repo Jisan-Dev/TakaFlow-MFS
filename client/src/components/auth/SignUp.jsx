@@ -12,12 +12,25 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import useAxiosPublic from '@/hooks/useAxiosPublic';
 import toast from 'react-hot-toast';
 import useAuth from '@/hooks/useAuth';
+import PersonalModal from './PersonalModal';
+import AgentModal from './AgentModal';
 
 export function SignUp() {
   const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState();
   const { setUpdate, setUser, setLoading, createUser } = useAuth();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    navigate('/');
+  };
+  const handleAgentModalClose = () => {
+    setIsAgentModalOpen(false);
+  };
 
   const handleChange = (value) => {
     setSelectedRole(value);
@@ -52,16 +65,15 @@ export function SignUp() {
     try {
       setLoading(true);
       console.log(data);
-      // const result = await axiosPublic.post('/users', data);
       const result = await createUser(data);
       console.log(result);
       console.log(result.status);
       if (result.status === 200 && result.data?.status === 'verified') {
-        toast.success('Registration Successful! Registration Bonus BDT 100 has been added to your account!');
+        setIsModalOpen(true);
         setUpdate((prev) => !prev);
-        navigate('/');
+        // navigate('/');
       } else if (result.status === 200 && result.data?.status !== 'verified') {
-        toast.success('Registration Successful! Agent Bonus BDT 1000 has been added to your account!');
+        setIsAgentModalOpen(true);
         reset();
       }
     } catch (error) {
@@ -138,6 +150,8 @@ export function SignUp() {
           </div>
         </CardContent>
       </Card>
+      <PersonalModal isOpen={isModalOpen} onClose={handleModalClose} />
+      <AgentModal isOpen={isAgentModalOpen} onClose={handleAgentModalClose} />
     </div>
   );
 }
