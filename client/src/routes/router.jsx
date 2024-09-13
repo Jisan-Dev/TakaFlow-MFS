@@ -9,9 +9,9 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: (
-      // <PrivateRoute>
-      <MainLayout />
-      // </PrivateRoute>
+      <PrivateRoute>
+        <MainLayout />
+      </PrivateRoute>
     ),
     children: [{ path: '/', element: <Overview /> }],
   },

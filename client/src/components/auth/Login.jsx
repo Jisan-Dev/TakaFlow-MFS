@@ -45,7 +45,8 @@ export function Login() {
   const submitHandler = async (data) => {
     try {
       const userData = await signIn(data);
-      if (userData.success && userData.status === 'verified') {
+      // console.log('userData', userData);
+      if (userData.success && userData.user.status === 'verified') {
         toast.success('Login Successful');
         setUpdate((prev) => !prev);
         // navigate(from, { replace: true });

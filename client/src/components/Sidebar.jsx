@@ -61,14 +61,9 @@ const Sidebar = () => {
             <div className="flex flex-col justify-between flex-1 mt-6">
               {/*  Menu Items */}
               <nav>
-                <MenuItem address={'/'} icon={SiHdfcbank} label={'OverviewCom'} />
+                {/* <MenuItem address={'/'} icon={SiHdfcbank} label={'OverviewCom'} /> */}
                 {user?.role === 'personal' && <UserMenu />}
                 {user?.role === 'agent' && <AgentMenu />}
-
-                {/* Add Room */}
-                {/* {role === 'guest' && <GuestMenu />}
-                {role === 'host' ? booleanState ? <HostMenu /> : <GuestMenu /> : undefined}
-                {role === 'admin' && <AdminMenu />} */}
               </nav>
             </div>
           </div>

@@ -71,16 +71,7 @@ router.get('/', async (req, res) => {
       res.status(401).send({ success: false, message: 'Invalid Credentials' });
       return;
     }
-    // // Create and sign JWT
-    // const token = jwt.sign({ phoneOrEmail }, process.env.JWT_SECRET, { expiresIn: '30d' });
-    // res
-    //   .cookie('token', token, {
-    //     httpOnly: true,
-    //     // expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-    //     secure: process.env.NODE_ENV === 'production',
-    //     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-    //   })
-    //   .json({ success: true, message: 'Logged in successfully', user, token });
+
     user.pin = '';
     res.status(200).json({ success: true, message: 'Logged in successfully', user });
   } catch (error) {
@@ -107,11 +98,11 @@ router.post('/jwt', async (req, res) => {
 
 router.get('/curr', verifyToken, async (req, res) => {
   try {
-    const { phoneOrEmail } = req.user;
-    const query = {
-      $or: [{ phone: phoneOrEmail }, { email: phoneOrEmail }],
-    };
-    const user = await User.findOne(query, { projection: { _id: 0 } });
+    const { email } = req.user;
+    const query = { email };
+    const user = await User.findOne(query, { _id: 0 });
+
+    if (!user) return res.status(401).send({ success: false, message: 'Not Authorized' });
     res.send(user);
   } catch (err) {
     res.status(500).json({ message: 'Something went wrong', error: err });

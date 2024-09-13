@@ -1,5 +1,6 @@
 import useAxiosPublic from '@/hooks/useAxiosPublic';
 import useAxiosSecure from '@/hooks/useAxiosSecure';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
 
@@ -26,7 +27,7 @@ const AuthProvider = ({ children }) => {
   const signIn = async (userInfo) => {
     setLoading(true);
     const { data } = await axiosPublic.get('/users', { params: userInfo });
-    if (data.success && data.status === 'verified') {
+    if (data.success && data.user?.status === 'verified') {
       setUser(data.user);
       localStorage.setItem('user', JSON.stringify(data.user));
       console.log('user from sigin func ', user);
@@ -62,7 +63,22 @@ const AuthProvider = ({ children }) => {
   //   console.log('useruser, ', user);
   // }, [user]);
 
-  const authInfo = { user, loading, setUpdate, setLoading, signIn, setUser, createUser };
+  const {
+    data: currentUser,
+    isLoading,
+    refetch,
+  } = useQuery({
+    enabled: !!user || !!user?.email,
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const { data } = await axios.get('http://localhost:3000/users/curr', { withCredentials: true });
+      console.log(data);
+      localStorage.setItem('user', JSON.stringify(data));
+      return data;
+    },
+  });
+
+  const authInfo = { user, loading, setUpdate, setLoading, signIn, setUser, createUser, currentUser, isLoading, refetch };
   return <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>;
 };
 
