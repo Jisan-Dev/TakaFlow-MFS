@@ -1,32 +1,30 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { GiCash } from 'react-icons/gi';
-import { Link, useNavigate } from 'react-router-dom';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import useAxiosPublic from '@/hooks/useAxiosPublic';
-import toast from 'react-hot-toast';
-import useAuth from '@/hooks/useAuth';
-import PersonalModal from './PersonalModal';
-import AgentModal from './AgentModal';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { GiCash } from "react-icons/gi";
+import { Link, useNavigate } from "react-router-dom";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+import useAuth from "@/hooks/useAuth";
+import PersonalModal from "./PersonalModal";
+import AgentModal from "./AgentModal";
 
 export function SignUp() {
-  const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState();
-  const { setUpdate, setUser, setLoading, createUser } = useAuth();
+  const { setUpdate, setLoading, createUser } = useAuth();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
 
   const handleModalClose = () => {
     setIsModalOpen(false);
-    navigate('/');
+    navigate("/");
   };
   const handleAgentModalClose = () => {
     setIsAgentModalOpen(false);
@@ -41,10 +39,10 @@ export function SignUp() {
     name: z.string().min(3).max(50),
     email: z.string().email(),
     phone: z.string().refine((val) => /^\+?[\d\s\-()]{10,20}$/.test(val), {
-      message: 'Invalid phone number',
+      message: "Invalid phone number",
     }),
     pin: z.string().refine((val) => /^[0-9]{5}$/.test(val), {
-      message: 'Invalid PIN. It must be exactly 5 digits.',
+      message: "Invalid PIN. It must be exactly 5 digits.",
     }),
   });
 
@@ -57,30 +55,30 @@ export function SignUp() {
 
   const submitHandler = async (data) => {
     if (!selectedRole) {
-      return toast.error('Please Provide your Account Type');
+      return toast.error("Please Provide your Account Type");
     }
     data.role = selectedRole;
-    data.status = selectedRole === 'personal' ? 'verified' : 'pending';
-    data.balance = (selectedRole === 'personal' && 100.0) || (selectedRole === 'agent' && 1000.0);
+    data.status = selectedRole === "personal" ? "verified" : "pending";
+    data.balance = (selectedRole === "personal" && 100.0) || (selectedRole === "agent" && 1000.0);
     try {
       setLoading(true);
       console.log(data);
       const result = await createUser(data);
       console.log(result);
       console.log(result.status);
-      if (result.status === 200 && result.data?.status === 'verified') {
+      if (result.status === 200 && result.data?.status === "verified") {
         setIsModalOpen(true);
         setUpdate((prev) => !prev);
         // navigate('/');
-      } else if (result.status === 200 && result.data?.status !== 'verified') {
+      } else if (result.status === 200 && result.data?.status !== "verified") {
         setIsAgentModalOpen(true);
         reset();
       }
     } catch (error) {
       if (error?.response?.status === 409) {
-        toast.error(error.response.data.message || 'User already exist');
+        toast.error(error.response.data.message || "User already exist");
       } else {
-        toast.error('Something went wrong, please try again later');
+        toast.error("Something went wrong, please try again later");
       }
       console.error(error);
     }
@@ -92,7 +90,7 @@ export function SignUp() {
         <CardHeader>
           <div>
             <div className="w-full flex my-3 justify-center items-center">
-              <Link to={'/'} className="text-3xl font-bold font-ibmsans flex items-center gap-1 text-indigo-600">
+              <Link to={"/"} className="text-3xl font-bold font-ibmsans flex items-center gap-1 text-indigo-600">
                 <GiCash className="text-4xl" /> TakaFlow
               </Link>
             </div>
@@ -105,22 +103,22 @@ export function SignUp() {
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" {...register('name')} type="text" required />
+                <Input id="name" {...register("name")} type="text" required />
                 {errors.name && <div className="text-red-500 text-xs"> {errors.name?.message} </div>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" {...register('email')} type="email" required />
+                <Input id="email" {...register("email")} type="email" required />
                 {errors.email && <div className="text-red-500 text-xs"> {errors.email?.message} </div>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="phone">Phone No.</Label>
-                <Input id="phone" {...register('phone')} type="text" required />
+                <Input id="phone" {...register("phone")} type="text" required />
                 {errors.phone && <div className="text-red-500 text-xs"> {errors.phone?.message} </div>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="pin">PIN (5 digits)</Label>
-                <Input id="pin" {...register('pin')} type="password" required />
+                <Input id="pin" {...register("pin")} type="password" required />
                 {errors.pin && <div className="text-red-500 text-xs"> {errors.pin?.message} </div>}
               </div>
               <div className="grid gap-2">
@@ -143,8 +141,8 @@ export function SignUp() {
             </div>
           </form>
           <div className="mt-4 text-center text-sm">
-            Already an account?{' '}
-            <Link to={'/login'} className="underline">
+            Already an account?{" "}
+            <Link to={"/login"} className="underline">
               Login
             </Link>
           </div>
