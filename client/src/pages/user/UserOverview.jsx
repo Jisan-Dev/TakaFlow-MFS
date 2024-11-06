@@ -1,5 +1,5 @@
-import useAuth from '@/hooks/useAuth';
-import React from 'react';
+import useAuth from "@/hooks/useAuth";
+import React from "react";
 
 const UserOverview = () => {
   const { user } = useAuth();
@@ -10,7 +10,7 @@ const UserOverview = () => {
         <div className="text-white">
           <p className="text-xl font-medium capitalize"> {user?.name} </p>
           <p className="text-sm">
-            Account Type: <span className="capitalize"> {user?.role} </span>{' '}
+            Account Type: <span className="capitalize"> {user?.role} </span>{" "}
           </p>
         </div>
         <div className="text-white bg-white/20 backdrop-blur-3xl p-4 rounded-md">
